@@ -12,6 +12,7 @@ HEIGHT = 400
 STEP = 10
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
+background = pygame.Surface(screen.get_size()).convert()
 clock = pygame.time.Clock()
 
 
@@ -36,6 +37,7 @@ def load_image(name, color_key=None):
     return image
 
 
+#  Начальный экран
 def start_screen():
     intro_text = ["ATARI BREAKOUT", "PRESS SPACE TO START"]
 
@@ -62,10 +64,14 @@ def start_screen():
         clock.tick(FPS)
 
 
+#  Экран игры
 def play_screen():
-    pass
+    background.fill((0, 0, 0))
+    screen.blit(background, (0, 0))
+    build_bricks()
 
 
+#  Класс, отвечающий за кирпичики
 class Wall(pygame.sprite.Sprite):
     def __init__(self, colour, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -77,6 +83,37 @@ class Wall(pygame.sprite.Sprite):
         self.rect.top = y
 
 
+#  Кирпичики
+def build_bricks():
+    brick_group_red = pygame.sprite.Group(Wall((255, 0, 0), 1, 1), Wall((255, 0, 0), 61, 1), Wall((255, 0, 0), 121, 1),
+                                          Wall((255, 0, 0), 181, 1), Wall((255, 0, 0), 241, 1),
+                                          Wall((255, 0, 0), 301, 1), Wall((255, 0, 0), 361, 1),
+                                          Wall((255, 0, 0), 421, 1), Wall((255, 0, 0), 481, 1),
+                                          Wall((255, 0, 0), 541, 1))
+    set_bricks(brick_group_red)
+    brick_group_yellow = pygame.sprite.Group(Wall((255, 255, 0), 31, 40), Wall((255, 255, 0), 91, 40),
+                                             Wall((255, 255, 0), 151, 40), Wall((255, 255, 0), 211, 40),
+                                             Wall((255, 255, 0), 271, 40), Wall((255, 255, 0), 331, 40),
+                                             Wall((255, 255, 0), 391, 40), Wall((255, 255, 0), 451, 40),
+                                             Wall((255, 255, 0), 511, 40))
+    set_bricks(brick_group_yellow)
+    brick_group_green = pygame.sprite.Group(Wall((0, 255, 0), 121, 79), Wall((0, 255, 0), 181, 79),
+                                            Wall((0, 255, 0), 241, 79), Wall((0, 255, 0), 301, 79),
+                                            Wall((0, 255, 0), 361, 79), Wall((0, 255, 0), 421, 79))
+    set_bricks(brick_group_green)
+    brick_group_blue = pygame.sprite.Group(Wall((0, 0, 255), 151, 118), Wall((0, 0, 255), 211, 118),
+                                           Wall((0, 0, 255), 271, 118), Wall((0, 0, 255), 331, 118),
+                                           Wall((0, 0, 255), 391, 118))
+    set_bricks(brick_group_blue)
+
+
+#  Вывод кирпичиков на экран
+def set_bricks(brick_group):
+    brick_group.clear(screen, background)
+    brick_group.draw(screen)
+
+
+#  Шарик
 class Ball(pygame.sprite.Sprite):
     def __init__(self, radius, x, y):
         super().__init__()

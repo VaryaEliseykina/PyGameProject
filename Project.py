@@ -14,6 +14,9 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 background = pygame.Surface(screen.get_size()).convert()
 clock = pygame.time.Clock()
 
+name = os.path.join('data', 'score.wav')
+ScoreSound = pygame.mixer.Sound(name)
+
 score = 0
 brick_group_red = pygame.sprite.Group()
 brick_group_yellow = pygame.sprite.Group()
@@ -72,6 +75,7 @@ def start_screen():
 
 #  Экран игры
 def play_screen():
+    global score
     ball = Ball()
     ball_group = pygame.sprite.Group(ball)
 
@@ -81,21 +85,20 @@ def play_screen():
     score = 0
     x_ = 300
     x_change = 0
-    is_defeated = False
     right = True
     left = True
 
-    brick_group_red.add(Wall((255, 0, 0), 1, 1), Wall((255, 0, 0), 61, 1), Wall((255, 0, 0), 121, 1),
-                        Wall((255, 0, 0), 181, 1), Wall((255, 0, 0), 241, 1), Wall((255, 0, 0), 301, 1),
-                        Wall((255, 0, 0), 361, 1), Wall((255, 0, 0), 421, 1), Wall((255, 0, 0), 481, 1),
-                        Wall((255, 0, 0), 541, 1))
-    brick_group_yellow.add(Wall((255, 255, 0), 31, 40), Wall((255, 255, 0), 91, 40), Wall((255, 255, 0), 151, 40),
-                           Wall((255, 255, 0), 211, 40), Wall((255, 255, 0), 271, 40), Wall((255, 255, 0), 331, 40),
-                           Wall((255, 255, 0), 391, 40), Wall((255, 255, 0), 451, 40), Wall((255, 255, 0), 511, 40))
-    brick_group_green.add(Wall((0, 255, 0), 121, 79), Wall((0, 255, 0), 181, 79), Wall((0, 255, 0), 241, 79),
-                          Wall((0, 255, 0), 301, 79), Wall((0, 255, 0), 361, 79), Wall((0, 255, 0), 421, 79))
-    brick_group_blue.add(Wall((0, 0, 255), 151, 118), Wall((0, 0, 255), 211, 118), Wall((0, 0, 255), 271, 118),
-                         Wall((0, 0, 255), 331, 118), Wall((0, 0, 255), 391, 118))
+    brick_group_red.add(Wall((255, 0, 0), 5, 1), Wall((255, 0, 0), 65, 1), Wall((255, 0, 0), 125, 1),
+                        Wall((255, 0, 0), 185, 1), Wall((255, 0, 0), 245, 1), Wall((255, 0, 0), 305, 1),
+                        Wall((255, 0, 0), 365, 1), Wall((255, 0, 0), 425, 1), Wall((255, 0, 0), 485, 1),
+                        Wall((255, 0, 0), 545, 1))
+    brick_group_yellow.add(Wall((255, 255, 0), 35, 40), Wall((255, 255, 0), 95, 40), Wall((255, 255, 0), 155, 40),
+                           Wall((255, 255, 0), 215, 40), Wall((255, 255, 0), 275, 40), Wall((255, 255, 0), 335, 40),
+                           Wall((255, 255, 0), 395, 40), Wall((255, 255, 0), 455, 40), Wall((255, 255, 0), 515, 40))
+    brick_group_green.add(Wall((0, 255, 0), 125, 79), Wall((0, 255, 0), 185, 79), Wall((0, 255, 0), 245, 79),
+                          Wall((0, 255, 0), 305, 79), Wall((0, 255, 0), 365, 79), Wall((0, 255, 0), 425, 79))
+    brick_group_blue.add(Wall((0, 0, 255), 155, 118), Wall((0, 0, 255), 215, 118), Wall((0, 0, 255), 275, 118),
+                         Wall((0, 0, 255), 335, 118), Wall((0, 0, 255), 395, 118))
 
     while True:
         for event in pygame.event.get():
@@ -121,16 +124,16 @@ def play_screen():
         Rect = pygame.draw.rect(screen, (255, 255, 255), (x_, 378, 50, 4))
         rect_group.append(Rect)
 
+        for i in rect_group:
+            if i != Rect:
+                rect_group.remove(i)
+
         set_bricks(brick_group_red)
         set_bricks(brick_group_yellow)
         set_bricks(brick_group_green)
         set_bricks(brick_group_blue)
 
-        for i in rect_group:
-            if i != Rect:
-                rect_group.remove(i)
-
-        text = pygame.font.SysFont(None, 30).render("Score:" + repr(score), True, (255, 255, 255), (0, 0, 0))
+        text = pygame.font.SysFont(None, 30).render("Score:" + str(score), True, (255, 255, 255), (0, 0, 0))
         textRect = text.get_rect()
         textRect.bottomright = screen.get_rect().bottomright
         screen.blit(text, textRect)
@@ -152,7 +155,7 @@ def game_over_screen():
 
     text2 = Font2.render("GAME OVER", True, (255, 255, 255), (0, 0, 0))
     text3 = Font.render("Press space to restart", True, (255, 255, 255), (0, 0, 0))
-    text7 = Font.render("Score:" + repr(score), True, (255, 255, 255), (0, 0, 0))
+    text7 = Font.render("Score:" + str(score), True, (255, 255, 255), (0, 0, 0))
     textRect2 = text2.get_rect()
     textRect3 = text3.get_rect()
     textRect7 = text7.get_rect()
@@ -162,7 +165,6 @@ def game_over_screen():
     screen.blit(text2, textRect2)
     screen.blit(text3, textRect3)
     screen.blit(text7, textRect7)
-    is_defeated = True
     #if musicPlaying:
         #pygame.mixer.music.stop()
 
@@ -170,8 +172,14 @@ def game_over_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.KEYDOWN:
                 play_screen()  # начинаем игру
+
+        brick_group_red.empty()
+        brick_group_yellow.empty()
+        brick_group_green.empty()
+        brick_group_blue.empty()
+
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -183,7 +191,7 @@ def victory_screen():
 
     text2 = Font2.render("VICTORY", True, (255, 255, 255), (0, 0, 0))
     text3 = Font.render("Press space to restart", True, (255, 255, 255), (0, 0, 0))
-    text7 = Font.render("Score:" + repr(score), True, (255, 255, 255), (0, 0, 0))
+    text7 = Font.render("Score:" + str(score), True, (255, 255, 255), (0, 0, 0))
     textRect2 = text2.get_rect()
     textRect3 = text3.get_rect()
     textRect7 = text7.get_rect()
@@ -198,8 +206,14 @@ def victory_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.KEYDOWN:
                 play_screen()  # начинаем игру
+
+        brick_group_red.empty()
+        brick_group_yellow.empty()
+        brick_group_green.empty()
+        brick_group_blue.empty()
+
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -263,7 +277,7 @@ class Ball(pygame.sprite.Sprite):
                 self.dir_y *= -1
                 self.speed = 6.5
                 score += 1
-                # pickUpSound.play()
+                ScoreSound.play()
                 break
 
         #  желтые
@@ -274,7 +288,7 @@ class Ball(pygame.sprite.Sprite):
                 self.dir_y *= -1
                 self.speed = 6
                 score += 1
-                # pickUpSound.play()
+                ScoreSound.play()
                 break
 
         #  зеленые
@@ -285,7 +299,7 @@ class Ball(pygame.sprite.Sprite):
                 self.dir_y *= -1
                 self.speed = 4
                 score += 1
-                # pickUpSound.play()
+                ScoreSound.play()
                 break
 
         #  синие
@@ -296,7 +310,7 @@ class Ball(pygame.sprite.Sprite):
                 self.dir_y *= -1
                 self.speed = 3
                 score += 1
-                # pickUpSound.play()
+                ScoreSound.play()
                 break
 
         # Смена направления

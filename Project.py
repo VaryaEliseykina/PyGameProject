@@ -48,18 +48,18 @@ def load_image(name, color_key=None):
 
 #  Начальный экран
 def start_screen():
-    intro_text = ["ATARI BREAKOUT", "PRESS SPACE TO START"]
+    intro_text = ["ATARI BREAKOUT", "press SPACE to start", "use K_LEFT and K_RIGHT to move platform"]
 
     fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
-    text_coord = 250
+    text_coord = 220
     for line in intro_text:
-        string_rendered = font.render(line, 1, pygame.Color('black'))
+        string_rendered = font.render(line, 1, (255, 255, 255))
         intro_rect = string_rendered.get_rect()
         text_coord += 10
         intro_rect.top = text_coord
-        intro_rect.x = 150
+        intro_rect.x = 100
         text_coord += intro_rect.height
         screen.blit(string_rendered, intro_rect)
 
@@ -67,7 +67,7 @@ def start_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.KEYDOWN:
                 play_screen()  # начинаем игру
         pygame.display.flip()
         clock.tick(FPS)
@@ -95,10 +95,12 @@ def play_screen():
     brick_group_yellow.add(Wall((255, 255, 0), 35, 40), Wall((255, 255, 0), 95, 40), Wall((255, 255, 0), 155, 40),
                            Wall((255, 255, 0), 215, 40), Wall((255, 255, 0), 275, 40), Wall((255, 255, 0), 335, 40),
                            Wall((255, 255, 0), 395, 40), Wall((255, 255, 0), 455, 40), Wall((255, 255, 0), 515, 40))
-    brick_group_green.add(Wall((0, 255, 0), 125, 79), Wall((0, 255, 0), 185, 79), Wall((0, 255, 0), 245, 79),
-                          Wall((0, 255, 0), 305, 79), Wall((0, 255, 0), 365, 79), Wall((0, 255, 0), 425, 79))
-    brick_group_blue.add(Wall((0, 0, 255), 155, 118), Wall((0, 0, 255), 215, 118), Wall((0, 0, 255), 275, 118),
-                         Wall((0, 0, 255), 335, 118), Wall((0, 0, 255), 395, 118))
+    brick_group_green.add(Wall((0, 255, 0), 65, 79), Wall((0, 255, 0), 125, 79), Wall((0, 255, 0), 185, 79),
+                          Wall((0, 255, 0), 245, 79), Wall((0, 255, 0), 305, 79), Wall((0, 255, 0), 365, 79),
+                          Wall((0, 255, 0), 425, 79), Wall((0, 255, 0), 485, 79))
+    brick_group_blue.add(Wall((0, 0, 255), 95, 118), Wall((0, 0, 255), 155, 118), Wall((0, 0, 255), 215, 118),
+                         Wall((0, 0, 255), 275, 118), Wall((0, 0, 255), 335, 118), Wall((0, 0, 255), 395, 118),
+                         Wall((0, 0, 255), 455, 118))
 
     while True:
         for event in pygame.event.get():
@@ -154,7 +156,7 @@ def game_over_screen():
     Font2 = pygame.font.SysFont(None, 72)
 
     text2 = Font2.render("GAME OVER", True, (255, 255, 255), (0, 0, 0))
-    text3 = Font.render("Press space to restart", True, (255, 255, 255), (0, 0, 0))
+    text3 = Font.render("Press SPACE to restart", True, (255, 255, 255), (0, 0, 0))
     text7 = Font.render("Score:" + str(score), True, (255, 255, 255), (0, 0, 0))
     textRect2 = text2.get_rect()
     textRect3 = text3.get_rect()
@@ -190,7 +192,7 @@ def victory_screen():
     Font2 = pygame.font.SysFont(None, 72)
 
     text2 = Font2.render("VICTORY", True, (255, 255, 255), (0, 0, 0))
-    text3 = Font.render("Press space to restart", True, (255, 255, 255), (0, 0, 0))
+    text3 = Font.render("Press SPACE to restart", True, (255, 255, 255), (0, 0, 0))
     text7 = Font.render("Score:" + str(score), True, (255, 255, 255), (0, 0, 0))
     textRect2 = text2.get_rect()
     textRect3 = text3.get_rect()
@@ -276,7 +278,7 @@ class Ball(pygame.sprite.Sprite):
                 brick_group_red.remove(brick)
                 self.dir_y *= -1
                 self.speed = 6.5
-                score += 1
+                score += 4
                 ScoreSound.play()
                 break
 
@@ -287,7 +289,7 @@ class Ball(pygame.sprite.Sprite):
                 brick_group_yellow.remove(brick)
                 self.dir_y *= -1
                 self.speed = 6
-                score += 1
+                score += 3
                 ScoreSound.play()
                 break
 
@@ -298,7 +300,7 @@ class Ball(pygame.sprite.Sprite):
                 brick_group_green.remove(brick)
                 self.dir_y *= -1
                 self.speed = 4
-                score += 1
+                score += 2
                 ScoreSound.play()
                 break
 

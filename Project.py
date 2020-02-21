@@ -50,7 +50,7 @@ def load_image(name, color_key=None):
 def start_screen():
     intro_text = ["ATARI BREAKOUT", "press SPACE to start", "use K_LEFT and K_RIGHT to move platform"]
 
-    fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
+    fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     text_coord = 220
@@ -114,7 +114,7 @@ def play_screen():
                     if right:
                         x_change = 10
                 if event.key == pygame.K_SPACE:
-                    terminate()
+                    pause_screen()
             if event.type == pygame.KEYUP:
                 x_change = 0
         ball_group.clear(screen, background)
@@ -140,6 +140,12 @@ def play_screen():
         textRect.bottomright = screen.get_rect().bottomright
         screen.blit(text, textRect)
 
+        text2 = pygame.font.SysFont(None, 30).render("Press SPACE for pause", True, (255, 255, 255), (0, 0, 0))
+        textRect2 = text2.get_rect()
+        textRect2.bottomright = screen.get_rect().bottomleft
+        screen.blit(text2, textRect2)
+
+
         for ball in ball_group:
             ball.check_defeat()
 
@@ -150,6 +156,37 @@ def play_screen():
         pygame.display.flip()
 
 
+#  Экран паузы
+def pause_screen():
+    screen.fill((0, 0, 0))
+    Font = pygame.font.SysFont(None, 30)
+    Font2 = pygame.font.SysFont(None, 72)
+
+    text2 = Font2.render("PAUSE", True, (255, 255, 255), (0, 0, 0))
+    text3 = Font.render("Press SPACE to continue", True, (255, 255, 255), (0, 0, 0))
+    text7 = Font.render("Score:" + str(score), True, (255, 255, 255), (0, 0, 0))
+    textRect2 = text2.get_rect()
+    textRect3 = text3.get_rect()
+    textRect7 = text7.get_rect()
+    textRect2.center = screen.get_rect().center
+    textRect3.midbottom = screen.get_rect().midbottom
+    textRect7.midtop = screen.get_rect().midtop
+    screen.blit(text2, textRect2)
+    screen.blit(text3, textRect3)
+    screen.blit(text7, textRect7)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN:
+                play_screen()  # начинаем игру
+
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+#  Экран поражения
 def game_over_screen():
     screen.fill((0, 0, 0))
     Font = pygame.font.SysFont(None, 30)
@@ -167,8 +204,6 @@ def game_over_screen():
     screen.blit(text2, textRect2)
     screen.blit(text3, textRect3)
     screen.blit(text7, textRect7)
-    #if musicPlaying:
-        #pygame.mixer.music.stop()
 
     while True:
         for event in pygame.event.get():
@@ -186,6 +221,7 @@ def game_over_screen():
         clock.tick(FPS)
 
 
+#  Экран победы
 def victory_screen():
     screen.fill((0, 0, 0))
     Font = pygame.font.SysFont(None, 30)
